@@ -19,7 +19,6 @@ RUN apk add shadow && usermod -u 1000 www-data && groupmod -g 1000 www-data
 #
 # - OR -
 #
-# RUN apk add --no-cache pcre-dev $PHPIZE_DEPS \
-#         && pecl install redis \
-#         && docker-php-ext-enable redis.so
-#
+RUN apk add --no-cache pcre-dev $PHPIZE_DEPS \
+        && pecl install redis \
+        && docker-php-ext-enable redis.so
