@@ -2,12 +2,12 @@ version: '3.5'
 
 networks:
     app-network:
-        name: ${APP_NAME}-network
+        name: ${APP_NAME-docker-laravel}-network
 
 services:
 
     app:
-        container_name: ${APP_NAME}-app
+        container_name: ${APP_NAME-docker-laravel}-app
         build:
             context: .
             dockerfile: Dockerfile
@@ -15,13 +15,11 @@ services:
             - .:/app
         ports:
             - "9000:9000"
-        env_file: 
-            - ./docker/docker.env
         networks:
             - app-network
  
     database:
-        container_name: ${APP_NAME}-mysql
+        container_name: ${APP_NAME-docker-laravel}-mysql
         image: mysql:5.7.29   
         restart: unless-stopped
         tty: true
@@ -30,13 +28,18 @@ services:
             - "3306:3306"
         volumes:
             - ./docker/mysql:/var/lib/mysql
-        env_file:
-            - ./docker/docker.env
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
         networks:
             - app-network
     
     redis:
-        container_name: ${APP_NAME}-redis
+        container_name: ${APP_NAME-docker-laravel}-redis
         image: "redis:alpine"
         restart: unless-stopped
         user: 1000:1000
@@ -48,7 +51,7 @@ services:
             - app-network
 
     composer:
-        container_name: ${APP_NAME}-composer
+        container_name: ${APP_NAME-docker-laravel}-composer
         image: composer:latest
         volumes:
             - .:/app
@@ -62,7 +65,7 @@ services:
             - app-network
     
     artisan:
-        container_name: ${APP_NAME}-artisan
+        container_name: ${APP_NAME-docker-laravel}-artisan
         build:
             context: .
             dockerfile: Dockerfile
@@ -76,7 +79,7 @@ services:
             - app-network    
     
     webserver: 
-        container_name: ${APP_NAME}-nginx
+        container_name: ${APP_NAME-docker-laravel}-nginx
         image: nginx:stable-alpine
         ports:
             - "8088:80"
