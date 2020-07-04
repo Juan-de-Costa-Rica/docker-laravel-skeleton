@@ -73,6 +73,7 @@ services:
             - .:/app
         depends_on: 
             - database
+            - composer
         entrypoint: ['/app/artisan']
         networks: 
             - app-network    
