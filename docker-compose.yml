@@ -5,18 +5,6 @@ networks:
         name: ${APP_NAME-docker-laravel}-network
 
 services:
-
-    app:
-        container_name: ${APP_NAME-docker-laravel}-app
-        build:
-            context: .
-            dockerfile: Dockerfile
-        volumes:
-            - .:/app
-        ports:
-            - "9000:9000"
-        networks:
-            - app-network
  
     database:
         container_name: ${APP_NAME-docker-laravel}-mysql
@@ -37,7 +25,7 @@ services:
             SERVICE_NAME: mysql
         networks:
             - app-network
-    
+
     redis:
         container_name: ${APP_NAME-docker-laravel}-redis
         image: "redis:alpine"
@@ -47,6 +35,21 @@ services:
             - "6379:6379"
         volumes:
             - ./docker/redis:/data
+        networks:
+            - app-network
+
+    app:
+        container_name: ${APP_NAME-docker-laravel}-app
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - .:/app
+        ports:
+            - "9000:9000"
+        depends_on:
+            - database
+            - redis
         networks:
             - app-network
 
