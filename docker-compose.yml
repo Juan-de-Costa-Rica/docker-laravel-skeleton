@@ -38,6 +38,16 @@ services:
         networks:
             - app-network
 
+    npm:
+        image: node:13.7
+        container_name: ${APP_NAME-docker-laravel}-npm
+        volumes:
+            - .:/app
+        working_dir: /app
+        entrypoint: ['npm']
+        networks: 
+            - app-network
+
     app:
         container_name: ${APP_NAME-docker-laravel}-app
         build:
@@ -75,8 +85,8 @@ services:
         volumes: 
             - .:/app
         depends_on: 
+            - app
             - database
-            - composer
         entrypoint: ['/app/artisan']
         networks: 
             - app-network    
@@ -95,6 +105,8 @@ services:
             - redis
         networks:
             - app-network
+
+
 
 
 
